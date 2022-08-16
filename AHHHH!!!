@@ -1,0 +1,169 @@
+
+Keys - are known as Registry Hives and can contain subkeys and values.
+Subkeys - can contain subkeys and values
+Values - contain data in specific formats.
+
+Example of Keys, Subkeys, and Values:
+HKEY_Local_Machine (HIVE)
+              ├──SOFTWARE (Key)
+              ├──BCD00000 (Key)
+              ├──HARDWARE (Key)
+              └──SYSTEM   (Key)
+                      └──RegisteredApplications (Subkey)
+                                        ├── File Explorer : Data (value)
+                                        ├── Paint : Data (value)
+                                        └──Wordpad : Data (value)
+
+
+There are five Registry Hives (groups of keys and thier associated values that are loaded when the system is started or a specific user logs in)
+
+**HKEY_LOCAL_MACHINE    <------- configuration information for the entire computer
+BCD000000000 <----- Boot configuration for windows
+Hardware     <----- List of Hardware devices connected to the machine/ Drivers
+SAM          <----- Security account manager that conains the authentication hashes and tokens for each user
+Security     <----- Helps determine rights and access to the systen
+Software     <----- System wide software (installing chrome for the entire computer rather than just your local account)
+Sytem        <----- Startup that deals with boot or driver
+
+
+**HKEY_USERS            <------- all user profiles on the system
+S-1-5-18 refers to LocalSystem account
+S-1-5-19 refers to LocalService account and it runs local services that do not require LocalSystem account.
+S-1-5-20 refers to NetworkService account and it runs network services that do not require LocalSystem account.
+S-1-5-21 refers to a comain account
+HKEY_USERS\S-1-5-21-3939661428-3032410992-3449649886-XXXX
+XXXX = RID
+Users with the Rid of 1002 and above are added users.
+Windows 7 and below set 500 to Admin
+1000 and 1001 are Hidden Admin and Hidden Administrator accounts
+
+
+**HKEY_CURRENT_USERS    <------- copy of the logged in user’s registry key based on thier SID (Security Identifier) from HKEY_USERS.
+Symbolic link to your account settings
+
+
+**HKEY_CURRENT_CONFIG   <------- Current configuration loadded in the Windows Registry
+
+
+**HKEY_CLASSES_ROOT     <------- Symbolic Link
+Example of how to add a HKEY_CLASSES_ROOT:
+new-item "hklm:\software\classes" -name ".fuk" -Force -ErrorAction  silentlycontinue  <------- Adding a new key/subkey to the Registry
+new-itemproperty "hklm:\software\classes\.fuk" -Name '(Default)' -PropertyType String -Value 'exefile' -Force -ErrorAction silentlycontinue   
+----- Adding default value to key
+new-itemproperty "hklm:\software\classes\.fuk" -Name 'Content Type' -PropertyType String -Value 'application/x-msdownload' -Force -ErrorAction silentlycontinue 
+----- Adding Content Type to the key
+
+
+
+NTUSER.dat = stores the user settings
+System32 Config = stores the System settings
+RegBack = Backup to the registry
+
+
+
+                                                   MANIPULATING WINDOWS REGISTRY
+Regedit.exe will allow you to query a key via GUI
+
+red.exe will allow you to query a key via Command Line
+reg.exe in the command line is ony really useful for importing and exporting, use Regededit.exe in the search bar instead
+Example of reg.exe to query a key:
+reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+
+Powershell also allows you to do this using Get-item
+get-item HKLM:\
+get-childitem HKLM:\     <----- gets all the subkeys of HKLM
+set-ItemProperty -path HKML:\Software\Microsoft\Windows\CurrentVersion\Run\ -Name malware -value "Im_innocent"    <----- makes a new item
+
+Get-PSDrive    <----- See mounted drives
+
+New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_Users     <------ Adds drive to save time so you don't have to continue querying the old drive
+add-content -value "New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_Users" $profile.AllUsersAllHosts  <----- Saves the new drive to the All $profile
+&$profile.AllUsersAllHosts      <------ Executes
+Get-PSDrive                     <----- Verify the PSDrive was added
+get-Item -path HKU:\*\Software\Microsoft\Windows\CurrentVersion\Run     <----- Grabs every instance of users from the HKU drive 
+
+
+Image File Eecution Options   <----- useful for debugging
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Eecution Options
+create a new key called utilman.exe, which also means 'help'
+Create a new string value in utilman.exe called Debugger, modify it so that it runs c:\windows\system32\cmd.exe
+gets persistence as the logged in user when running utilman, then when locking the screen, using the actual utilman to privilege escalate
+
+
+
+
+                                                       WINDOWS FILE SYSTEM
+Windows native data stream is NTFS
+Files consists of attributes, security settings, mainstreams and alternate streams. Only the mainstream is visible by default.
+
+Example of an alternate data stream
+
+C:\windows\system32>echo social security numbers > good.txt:secret.info     <------the colon hides the data stream 
+C:\windows\system32>dir good.txt 
+ Directory of C:\windows\system32
+ 02/27/2021 07:13 PM                  23 good.txt
+                 1 File(s)            23 bytes
+                 0 Dir(s) 20,060,712,960 bytes free
+
+C:\windows\system32>type good.txt 
+Always try your best                                                            <------- This string was input from the file good.txt
+
+
+dir /R good.txt         <------ to find Alternate Data Streams in files
+notepad good.txt:secret.info    <------ allows you to edit the ADS
+
+
+
+                                                  Finding ADS with Powershell
+
+Get-Item reminder.txt -Stream *                     <----- find the ADS
+Get-Content reminder.txt -Stream secret.info        <----- echo the ADS
+
+get-childitem <path> | foreach-object { get-item $_.fullname -stream * } | where { $_.stream -ne ':$DATA' } | Get-content  <---- search for the content of
+an ADS
+
+________________________________________________________________________________________________________________________________________________________________
+https://os.cybbh.io/public/os/latest/index.html <---- Public book
+
+command to get into the windows opstation = xfreerdp /u:student /v:<ip> /dynamic-resolution +glyph-cache +clipboard
+
+If there is a pipe in a list of processes that is bad
+
+Cim <------ Categorized classes of objects
+
+WINDOWS POWERSHELL REMOTING
+get-PSSessionConfiguration     <------ Tells us who has permissio to do remote management
+NT Authority = Kernel
+
+winrm get winrm/config    <------ Displays the WinRM configuration
+
+WSMan     <----- used because windows does not trust any other device
+Get-Item WSMan:\localhost\client\TrustedHosts                                         <------- Query trusted hosts
+Set-Item WSMan:\localhost\Client\TrustedHosts -Value "Server01"                       <------- Adding a single item to TrustedHosts
+Set-Item WSMan:\localhost\Client\TrustedHosts -Value "Server01,Server02,127.0.0.1"    <------- Adding multiple items
+Set-Item WSMan:\localhost\Client\TrustedHosts -Value "Server03" -Concatenate          <------- Appends the Value instead of changing it
+
+
+Invoke-Command <--------- not a remoting command. This is how to remotely run a command one time before ending the session
+Invoke-Command -ComputerName File-Server {Get-Service}                                 <----- Creates 1-to-1 Temporary Session
+Invoke-Command -ComputerName File-Server,Domain-Controll,Workstation2 {Get-Service} -asjob <------ Running a Temporary Session as a Job
+Invoke-Command -ComputerName File-Server,Domain-Controll,Workstation2 c:\windows\findevil.ps1  <------ runs our script on several computers at the same time
+Receive-Job <job #>                                                                    <----- Displays the job's Results
+
+
+PowerShell doesn't have a native cmdlet that will give you processor information (such as get-processor or get-cpu). 
+Knowing this information might be necessary. 
+What command would give you information about the system's processor?
+Get-CimInstance -Class CIM_Processor 
+
+
+Find the only line that makes the two files in the CTF user's Downloads folder different.
+compare-object (get-content C:\Users\ctf\downloads\new.txt) (get-content C:\Users\ctf\downloads\old.txt)
+
+
+Check to see if there is a profile under AllUsersAllHosts
+Test-Path -Path $PROFILE.AllUsersAllHosts
+
+Malware is running in a PowerShell profile on the File-Server. 
+Based on PowerShell profile order of precedence (what is read first), find the correct flag.
+cat $PROFILE.AllUsersAllHosts
