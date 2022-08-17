@@ -1,0 +1,29 @@
+/bin (usr/bin, /usr/local/bin)
+/sbin (/usr/sbin)
+/home 
+
+What am I?
+hostname
+uname -a
+
+Who am I?
+whoami
+id
+
+What can I do?
+sudo -l
+
+What is going on?
+w
+who
+ps -elf
+
+What happening?
+!!!TBD!!!Process Validity!!!
+
+How is it happening?
+!!!TBD!!!Process Validity!!!
+
+What is in there?
+cat
+
