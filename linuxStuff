@@ -39,3 +39,12 @@ cat
 /run................................................Run-time and variable data; mounted at boot
 /tmp................................................temporary files accessable by any user
 /proc...............................................processes
+
+/etc/passwd.........................................holds a list of users
+/etc/groups.........................................given groups
+ls -lisa............................................gives detailed list of the desired directory
+
+The three fields of permission are U.G.O; User, Group, Others(everyone else)
+SUID................................................Says that it is executed as the specified user (root)
+SGID................................................Says that it is executed as the specified group
+Sticky Bit..........................................Shared directories; files can only be deleted by the user who created
