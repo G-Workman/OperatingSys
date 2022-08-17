@@ -23,29 +23,30 @@ How is it happening?
 What is in there?
 cat
 
-/...................................................Root
-/bin (usr/bin, /usr/local/bin)......................stores binaries and commands
-/sbin (/usr/sbin)...................................stores system binaries
-/home...............................................default directory for all users
-/usr................................................universal system resources; catch
-/etc................................................catch all for system level configuration files
-/var................................................stores things likely to change such as logs
-/boot...............................................read at boot-up; grub/boot loaders
-/dev................................................special devices files; hardware; std in/out/err; block devices
-/lib................................................libraries; .dll; functions
-/mnt................................................permanently attached external storage
-/media..............................................removable external devices (CD, flash drives, etc.)
-/opt................................................optionals installed by user
-/run................................................Run-time and variable data; mounted at boot
-/tmp................................................temporary files accessable by any user
-/proc...............................................processes
+/..........................................Root
+/bin (usr/bin, /usr/local/bin).............stores binaries and commands
+/sbin (/usr/sbin)..........................stores system binaries
+/home......................................default directory for all users
+/usr.......................................universal system resources; catch
+/etc.......................................catch all for system level configuration files
+/var.......................................stores things likely to change such as logs
+/boot......................................read at boot-up; grub/boot loaders
+/dev.......................................special devices files; hardware; std in/out/err; block devices
+/lib.......................................libraries; .dll; functions
+/mnt.......................................permanently attached external storage
+/media.....................................removable external devices (CD, flash drives, etc.)
+/opt.......................................optionals installed by user
+/run.......................................Run-time and variable data; mounted at boot
+/tmp.......................................temporary files accessable by any user
+/proc......................................processes
 
-/etc/passwd.........................................holds a list of users
-/etc/groups.........................................given groups
-ls -lisa............................................gives detailed list of the desired directory
+/etc/passwd................holds a list of users
+/etc/groups................given groups
+ls -lisa...................gives detailed list of the desired directory
 
 The three fields of permission are U.G.O; User, Group, Others(everyone else)
-SUID................................................Says that it is executed as the specified user (root)
-SGID................................................Says that it is executed as the specified group
-Sticky Bit..........................................Shared directories; files can only be deleted by the user who created
+SUID.................Says that it is executed as the specified user (root)
+SGID.................Says that it is executed as the specified group
+Sticky Bit...........Shared directories; files can only be deleted by the user who created
 find / -perm /xxxx 2>/dev/null -exec ls -lisa {}\;
+
