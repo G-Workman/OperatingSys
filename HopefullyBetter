@@ -1,0 +1,17 @@
+Ctrl + Alt + T                      Terminal
+
+vim .ssh/config                     Create the config file
+    Host <Name>                     <
+        HostName <IP>               <
+        User <user>                 <
+        Port <port(22)>             <
+    :wq                             <
+chmod 600 .vim/config
+ssh-keygen (blank, blank, blank)
+ssh-copy-id <Name>
+
+vim .bash_aliases
+alias sshops='ssh linops -X terminator&'    <
+:wq
+source .bashrc
+sshops
