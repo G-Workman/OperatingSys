@@ -1,7 +1,3 @@
-/bin (usr/bin, /usr/local/bin)
-/sbin (/usr/sbin)
-/home 
-
 What am I?
 hostname
 uname -a
@@ -27,3 +23,19 @@ How is it happening?
 What is in there?
 cat
 
+/...................................................Root
+/bin (usr/bin, /usr/local/bin)......................stores binaries and commands
+/sbin (/usr/sbin)...................................stores system binaries
+/home...............................................default directory for all users
+/usr................................................universal system resources; catch
+/etc................................................catch all for system level configuration files
+/var................................................stores things likely to change such as logs
+/boot...............................................read at boot-up; grub/boot loaders
+/dev................................................special devices files; hardware; std in/out/err; block devices
+/lib................................................libraries; .dll; functions
+/mnt................................................permanently attached external storage
+/media..............................................removable external devices (CD, flash drives, etc.)
+/opt................................................optionals installed by user
+/run................................................Run-time and variable data; mounted at boot
+/tmp................................................temporary files accessable by any user
+/proc...............................................processes
