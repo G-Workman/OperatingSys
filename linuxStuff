@@ -48,3 +48,4 @@ The three fields of permission are U.G.O; User, Group, Others(everyone else)
 SUID................................................Says that it is executed as the specified user (root)
 SGID................................................Says that it is executed as the specified group
 Sticky Bit..........................................Shared directories; files can only be deleted by the user who created
+find / -perm /xxxx 2>/dev/null -exec ls -lisa {}\;
