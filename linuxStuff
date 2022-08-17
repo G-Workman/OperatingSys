@@ -50,3 +50,5 @@ SGID.................Says that it is executed as the specified group
 Sticky Bit...........Shared directories; files can only be deleted by the user who created
 find / -perm /xxxx 2>/dev/null -exec ls -lisa {}\;
 
+man -k compress.....keyword search for "compress"
+apropos compress....keyword search for "compress"
