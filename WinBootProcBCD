@@ -7,4 +7,61 @@ BIOS requires MBR (Master Boot Record; first 512 bytes)
     Partition Boot Record (PBR) on the Active Partition is loaded
     Code iin the PBR loads bootmgr
 UEFI uses GPT (GUID Partition Table)
+    UEFI Boot Manager (bootmgrfw.efi)
+    OS Loader is winload.efi winresume.efi
     
+    
+                                                             Boot Process
+    
+                                                                POST
+                                                                 ^
+                                                                /  \
+                                                               /    \
+                                                             BIOS   UEFI
+                                                             /         \
+                                                            /           \
+                                                          MBR           GPT
+                                                          /               \
+                                                     Volume Boot           V
+                                                        Sector             V
+                                                        /    \               \
+                                                       /      \               \
+                                                 NTLDR.EXE   Bootmgr.exe      bootmgrfw.efi
+                                                 Kernel 5     Kernel 6+         Kernel 6+
+                                                 /                  \               \
+                                                /                    \                \
+                                           Bootini.exe              BCD                BCD
+                                              /                        \                 \
+                                             V                      OS Loader           OS Loader
+                                            /                            \                   \
+                                           /                               \                   \
+                                       NTOSKRNL                         NTOSKRNL            NTOSKRNL
+                                       
+                                       
+                                      
+                                                               Windows Login Process
+
+                                                                    System (PID 4)
+                                                                      |     |
+                                                                      |     |
+                                                                      SMSS.exe
+                                                                      |      |
+                                                                     /        \
+                                                                    /           \ 
+                                                                SMSS.exe        SMSS.exe
+                                                               session 0        session 1  X
+                                                              /        |        |        \
+                                                             /         |        |          \
+                                                            /          |        |            \
+                                                      CSRSS.exe  WININIT.exe  CSRSS.exe     WINLOGON.exe
+                                                          0            0         1               1
+                                                                /           \               /           \
+                                                               /             \             /             \
+                                                            LSASS.exe    SVCHOST.exe   LOGONUI.exe     USERINIT.exe
+                                                               0             0             1  X            1  X
+                                                                                                            |
+                                                                                                            |
+                                                    X = Process Exits                                 Explorer.exe
+                                                    Session 1 = Interactive                                 1
+                                                    Session 0 = Not Interactive
+=========================================================================================================================================================
