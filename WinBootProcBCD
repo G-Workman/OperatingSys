@@ -37,8 +37,7 @@ UEFI uses GPT (GUID Partition Table)
                                            /                               \                   \
                                        NTOSKRNL                         NTOSKRNL            NTOSKRNL
                                        
-                                       
-                                      
+=========================================================================================================================================================
                                                                Windows Login Process
 
                                                                     System (PID 4)
@@ -65,3 +64,25 @@ UEFI uses GPT (GUID Partition Table)
                                                     Session 1 = Interactive                                 1
                                                     Session 0 = Not Interactive
 =========================================================================================================================================================
+Smss.exe (Session Manager Subsystem) does the following tasks:
+    Loads environmental variables like %APPDATA% and %COMPUTERNAME%
+    Populates the pagefile located in C:\pagefile.sys
+    Starts the kernel and user mode sub systems.
+    Starts a csrss.exe to manage processes and threads for each User Subsystem.
+
+Session 0 Details:
+    smss.exe installs the Win32 subsystem kernel and user mode components (win32k.sys - kernel; winsrv.dll - user; and csrss.exe - user.)
+        crsrss.exe - the Client/Server Runtime Subsystem supports process / thread creation and management.
+        wininit.exe marks itself as critical, initializes the Windows temp directory, loads the rest of the registry, and starts user mode scheduling. It also installs programs that require a reboot to finish the install process. It also starts:
+            lsm.exe - the Local Session Manager (LSM) handles all sessions of a system (both remote desktop sessions and local system sessions.)
+            lsass.exe - the Local Security Authority Subsystem (LSASS) provides user authentication services, manages the local security policy, and generates access tokens.
+            services.exe the Services Control Manager (SCM) loads AutoStart services, using LSASS to authenticate if they run as something other than System.
+        wininit.exe then waits for system shutdown to undo everything it started.
+        
+Session 1 Details:
+    Spawn a Session 1 ( or higher) csrss.exe
+    Spawn Winlogon.exe which by default prompts for credentials with logonui.exe
+    Spawn userinit.exe which creates an account token and creates a custom environment
+    Spawn explorer.exe as the customized graphical environment.
+    
+    
