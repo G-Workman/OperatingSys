@@ -73,10 +73,13 @@ Smss.exe (Session Manager Subsystem) does the following tasks:
 Session 0 Details:
     smss.exe installs the Win32 subsystem kernel and user mode components (win32k.sys - kernel; winsrv.dll - user; and csrss.exe - user.)
         crsrss.exe - the Client/Server Runtime Subsystem supports process / thread creation and management.
-        wininit.exe marks itself as critical, initializes the Windows temp directory, loads the rest of the registry, and starts user mode scheduling. It also installs programs that require a reboot to finish the install process. It also starts:
+        wininit.exe - marks itself as critical, initializes the Windows temp directory, loads the rest of the registry, and starts user mode scheduling. 
+                      It also installs programs that require a reboot to finish the install process. It also starts:
             lsm.exe - the Local Session Manager (LSM) handles all sessions of a system (both remote desktop sessions and local system sessions.)
-            lsass.exe - the Local Security Authority Subsystem (LSASS) provides user authentication services, manages the local security policy, and generates access tokens.
-            services.exe the Services Control Manager (SCM) loads AutoStart services, using LSASS to authenticate if they run as something other than System.
+            lsass.exe - the Local Security Authority Subsystem (LSASS) provides user authentication services, 
+                        manages the local security policy, and generates access tokens.
+            services.exe - the Services Control Manager (SCM) loads AutoStart services, using LSASS to authenticate if they
+                           run as something other than System.
         wininit.exe then waits for system shutdown to undo everything it started.
         
 Session 1 Details:
@@ -86,3 +89,21 @@ Session 1 Details:
     Spawn explorer.exe as the customized graphical environment.
     
     
+How to identify BIOS or UEFI:
+    C:\Windows\Panther\setupact.log | findstr /i "detect boot environement"
+    bcdedit | findstr /i winload
+    bcdedit | findstr /i winresume
+    msinfo32                            #GUI
+    bcdedit /set description "Windows 930"
+    bcdedit /set safeboot minimal       #boots in safemode
+    bcdedit /set safeboot Network       #boots in safemode w/ Network resources such as NIC to travers online
+    bcdedit /set safebootalternateshell #boots in safemode w/ other than defualt shells
+    bcdedit /deletevalue safeboot
+    bcdedit /deletevalue safebootalternateshell
+    msconfig                            #GUI
+        select boot
+            shows description and boot options for safeboot
+        select Services
+            find a non-Microsoft service (click the check-box to hide Microsoft Services)
+            uncheck potential malicious custom service
+            apply
