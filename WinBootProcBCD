@@ -1,0 +1,10 @@
+MBR uses BIOS while UEFI uses GPT
+winload.exe = cold starts
+winresume.exe = hibernation snapshot
+fastboot = Works on Shut Down not Restart hybrid of winload.exe and winresume.exe
+BIOS requires MBR (Master Boot Record; first 512 bytes)
+    Acitve Partition identified in the Partition Table
+    Partition Boot Record (PBR) on the Active Partition is loaded
+    Code iin the PBR loads bootmgr
+UEFI uses GPT (GUID Partition Table)
+    
