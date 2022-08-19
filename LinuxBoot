@@ -1,0 +1,102 @@
+POST - BIOS - MBR - GRUB - LINUX KERNEL - INIT - SYSV (/sbin/init) - Bring system desired login state
+       Big    Mike  Got          Killed     In     Russia
+
+
+POST - UEFI - GPT - GRUB.EFI - LINUX KERNEL - INIT - SYSTEMD (/lib/systemd/systemd) - Bring system desired login state
+
+sudo dmidecode -t bios
+    identifies BIOS
+    
+lsblk
+    tells us what disks are in the system and where they are truly mounted
+    
+df -h
+    tells us the size of the disk and where they are mounted
+    
+sudo parted -l
+    shows information about the disk
+
+sudo xxd -l 512 -g 1 /dev/vda                                      #or /dev/sda or /dev/hda
+    shows the hex dump
+    
+eb 63 90
+    'eb' = jump to 0x63
+    
+sudo dd if=/dev/vda of=MBRcopy bs=1 count=512                      #or /dev/sda or /dev/hda
+    copies if to of byte by byte
+
+The last 66 bytes represent partition and magic number is the last 2 bytes
+
+BIOS
+    First program to run on startup (flash or ROM)
+        If stored in flash memeory -> becomes a target for BIOS Rootkits
+    Performs POST (Power On Self Test)
+    Performs system integrity checks
+    Builds a device tree
+    Reads and executes the first sector on the boot disk (MBR) to load bootloader to memory
+MBR - Master Boot Record
+    Located at the very beginning of the bootbable disk and contains the primary bootloader, partition table and MBR validity check
+    Contains code for GRUB
+    Could also contain LILO (Linux Loader)
+    First 512 Bytes
+    4 Primary Partitions w/ max of 2 TB each
+    /dev/sda or vda or hda
+
+GRUB - Grand Unified Bootloader
+    cat /boot/grub/grub.cfg
+    Dynamically configurable with the capability to make changes during boot
+        Config file - /boot/grub/menu.lst
+        Altering boot entries, selecting different kernels, and modifying the initial RAM disk (initrd)
+    OS Selection screen where if no choice is made, default kernel specified in the grub config file
+    GRUB passes text based kernel. If not recognized, the option will be passed to init
+    Kernel options are sometimes configurable at the menu with the 'e' key
+    
+KERNEL
+    Monolithic
+    Uncompresses itself into RAM
+    Establishes memory management, detects CPU type, and page tables
+    Mounts the root '/' filesystem
+    kernel is process 0 ([kthreadd] - PID 2)
+    Supports modules
+        sudo lsmod
+            #list of modules and what uses them
+    Executes /sbin/init or systemd daemon, the very first process started by the kernel with a process ID (PID) of 1
+    ls -l /sbin/init
+        determines which Init system you are using
+            systemd has symbolic link
+            systemV has no symbolic link
+    ps -p 1
+        gets short process listing of PID 1
+INIT or SystemD
+    
+    Services and Process manager
+    Parent of all Services
+    Sys V uses Init, runlevels, and is serial 
+        S - Start; K - Stop/kill
+        Uses INITTAB as the configuration file
+        name:Runlevel:Execution:Command
+            Runlevels                                                                                       !!!SYSTEMD TARGETS!!!
+                0           Halt                Shutdown system                                             poweroff.target
+                1           Single User         Single session no network; used to troubleshoot             rescue.target
+                2           multi-user          Multi session no network                                    multi-user.target
+                3           Multi + Net         Multi session with network functionality                    multi-user.target
+                4           UNDEFINED           UNDEFINED                                                   multi-user.target
+                5           Multi + Net + GUI   Multi session with Net and GUI                              graphical.target
+                6           Reboot              Restart System                                              reboot.target
+        !!!minas box is only sysV in network!!!
+        ls -l /etc/rcx.d            x = 0-6
+        /etc/init.d/rc x            x = 0-6
+    SystemD uses systemd, target units, and is parallel
+        Faster and more secure
+        /etc/systemd/system - user created services
+        /lib/systemd/system - package maintainer/system created services
+        /usr/lib/systemd/system - package maintainer/system created services
+        systemctl list-dependencies graphical.target
+            green - active
+            white - inactive
+            red cross - error
+            rotation arrow - restarting
+        systemctl -p Wants graphical.target
+            show wants of graphical.target
+        systemctl list-unit-files
+            show referencable units
