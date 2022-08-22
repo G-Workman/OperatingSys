@@ -37,3 +37,54 @@ sc.exe showsid Power
 
 get-wmiobject win32_process | select-object -property Name, ProcessId, ParentProcessId, Path, commandline
 
+schtasks.exe /query /tn \Microsoft\Xb1GameSave\Xb1GameSaveTask /v /fo list
+
+netstat -anob
+
+
+Process Explorer
+AutoRuns
+TCPView
+
+ProcMon64.exe
+    primary use
+        log boot process (every second)
+AutoRuns
+    detects to see what starts automatically (drivers, startup programs, scheduled tasks, etc.)
+        pink - not verified or exists
+        yellow - file not found
+        green - ?
+
+ProcessExplorer64.exe
+    properties
+        path (explore takes you to location in file explorer)
+        
+TCPView64.exe
+    netstat network listing (dynamic)
+        Red - connection terminated
+        green - connection made
+
+UAC is GUI only
+    UAC limits the privileges of user run applications to prevent the modification of system files, resources, or settings
+    Registry key is located at "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+    COLOR-CODED CONSENT PROMPTS
+        Red - Application or publisher blocked by group policy
+        Blue & gold - Administrative application
+        Blue - Trusted and Authenticode signed application
+        Yellow - Unsigned or signed but not trusted application
+    asInvoker - The application will run with the same permissions as the process that started it. 
+                The application can be elevated to a higher permission level by selecting Run as Administrator.
+    requireAdministrator - The application will run with administrator permissions. 
+                           The user who starts the application must be a member of the Administrators group. 
+                           If the opening process is not running with administrative permissions, the system will prompt for credentials.
+    highestAvailable - The application will run with the highest permission level that it can. 
+                       If the user who starts the application is a member of the Administrators group, this option is the same as requireAdministrator. 
+                       If the highest available permission level is higher than the level of the opening process, the system will prompt for credentials.
+                       Some Windows executables can "auto elevate" without a prompt.
+    Does the file/binary/executable meet these conditions?
+        Auto Elvate is True
+            ./strings C:\Windows\System32\*.exe -accepteula | select-string -SimpleMatch "autoelevate"
+        Digitally Signed
+            ./sigcheck -m C:\Windows\System32\slui.exe -accepteula | Select-String -SimpleMatch "level"
+        Trusted Directory
+            i.e C:\Windows\System32                   
