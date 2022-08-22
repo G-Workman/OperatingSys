@@ -1,0 +1,39 @@
+How do we discover Normal, abnormal, and Hidden Processes and Services?
+    Get-Process SMSS,CSRSS,LSASS | Sort -property Id
+    Get-Ciminstance win32_process | where {$_.Name -like "*LSASS*"} | Select *
+Do boot processes have descriptions?
+    Get-Process | Select Name, Id, Description | Sort -Property Id
+Where do the system processes and services normally run from?               #C:\Windows\System32
+    Get-Process | Select Name, Id, Path
+    Get-Ciminstance Win32_service | Select Name, Processid, Pathname
+    Get-Ciminstance Win32_process | Select *
+Are Priority Levels of processes important?
+    Get-Process | Select Name, Priorityclass
+    Tasklist /m
+    Tasklist /m /fi "IMAGENAME eq lsass.exe"
+    Taskmgr
+How would malware use Schedule Task?
+    schtasks /query | more
+    Get-ScheduledTask | Select * | Select -First 5
+
+Process requires interaction
+Service runs in the background with minimal to no interaction
+.dll is a library that contain pointers to resources available for other programs to interact with
+
+Why is process Validity Important?
+    To find if the processes running are legit or tampered with
+    
+Check Malware/Hashes on:
+    virustotal.com
+    
+.dll injections/hijacking
+    alter the handles not the binary
+    
+get-process -name lsass | select -expandproperty modules | out-file $home/desktop/handles.txt -width 4096
+    .................................................... | Format-Table -wrap
+    View the modules the process is using and puts it in a file
+
+sc.exe showsid Power
+
+get-wmiobject win32_process | select-object -property Name, ProcessId, ParentProcessId, Path, commandline
+
