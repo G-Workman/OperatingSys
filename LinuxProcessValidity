@@ -113,4 +113,10 @@ crontab jobs run with the permissions of the owner of the crontab file
 +------------ Minute            (range: 0-59)
 
 
+List all open files for a specific process.
+    sudo lsof -c sshd
+
+List all open files being used by every process.
+    sudo lsof | tail -30
     
+sudo systemctl list-units --all --type service
