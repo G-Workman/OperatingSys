@@ -4,13 +4,19 @@ STARTUP PROCESSES (SYSV)
         For user-space processes /sbin/init ( PID = 1 )
         All kernel processes are fork()ed from [kthreadd] and all user processes are fork()ed from /sbin/init or direct ancestor.
         Kernel processes are typically used to manage hardware, are directly handled by the kernel,have their own memory space, and have a high priority.
-        They can be identified by the name enclosed in square brackets [] (using the -f option with ps). kthreadd spawned processes will have a PPID of           2.
+        They can be identified by the name enclosed in square brackets [] (using the -f option with ps). kthreadd spawned processes will have a PPID of 
+        2.
         The kernel starts /sbin/init which is the parent/grandparent of all user processes.
 
 KERNEL VS USER SPACE
-    The kernel processes run in its own memory space. User processes run in a separate memory space. Code running in kernel mode has unrestricted access     to the processor and main memory. This is a powerful but dangerous privilege that allows a kernel process to easily crash the entire system. The area      that only the kernel can access is called kernel space.
+    The kernel processes run in its own memory space. User processes run in a separate memory space. 
+    Code running in kernel mode has unrestricted access to the processor and main memory. 
+    This is a powerful but dangerous privilege that allows a kernel process to easily crash the entire system. 
+    The area that only the kernel can access is called kernel space.
 
-    User mode, in comparison, restricts access to a (usually quite small) subset of memory and safe CPU operations. User space refers to the parts of         main memory that the user processes can access. If a process makes a mistake and crashes, the consequences are limited and can be cleaned up by the       kernel. This means that if your web browser crashes, it won’t take down
+    User mode, in comparison, restricts access to a (usually quite small) subset of memory and safe CPU operations. User space refers to the parts of
+    main memory that the user processes can access. If a process makes a mistake and crashes, the consequences are limited and can be cleaned up by the
+    kernel. This means that if your web browser crashes, it won’t take down
 
 PROCESS OWNERSHIP, EUID, RUID
 
@@ -20,7 +26,9 @@ PROCESS OWNERSHIP, EUID, RUID
     The real user ID defines the user that can interact with the running process—most significantly, which user can kill and send signals to a process.
     Users can only modify / interact with files /process that they own or have been shared with them.
 
-    A user is an entity that can run processes and own files. Users exist primarily to support permissions and boundaries. Every user-space process has a     user owner, and processes are said to run as the owner. A user may terminate or modify the behavior of its own processes (within certain limits), but     it cannot interfere with other users’ processes. In addition, users may own files and choose whether they share them with other users.
+    A user is an entity that can run processes and own files. Users exist primarily to support permissions and boundaries. Every user-space process has a
+    user owner, and processes are said to run as the owner. A user may terminate or modify the behavior of its own processes (within certain limits), but
+    it cannot interfere with other users’ processes. In addition, users may own files and choose whether they share them with other users.
 
 SYSTEM CALLS
     A system call is an interaction between a process and the kernel.
@@ -54,3 +62,55 @@ ORPHAN AND ZOMBIE (DEFUNCT) PROCESSES
     Zombie (defunct) - completed process, but still has an entry in the process table, waiting on parent to acknowledge or terminated
         Zombie can’t be terminated with kill since it has already finished execution, unless the parent process that spawned it is killed.
         Do not use resources, but do take up an entry of the process table which is a finite resource
+
+ALL CAPS MEANS THERE IS A CHILD PROCESS AND A CRON JOB
+
+Every daemon is an orphan; every orphan is not a daemon
+
+Program that runs as a background process (Ex. syslogd, sshd, cron)
+All daemons are Orphans, but all orphans are not Daemons
+A daemons purpose is to manage/monitor a service: {status, start, restart}
+‘man cron’ - to see an example of a daemon that starts during the boot process
+Persistence - Daemons are service that should run for duration of system operation, since init is parent, would require shutdown for parent to die.
+Malicious processes are sometimes orphaned and named to make it look like a daemon process ‘ps --ppid 1 -lf’
+
+‘jobs’ - Display List of Jobs running in the background
+‘fg’ or ‘bg’ - Push / Pull jobs to / from the foreground / background
+‘kill %<job number>’ - Terminate the process by job number
+‘[ctrl -z]’ or ‘kill -19’ - stop / suspend the job
+‘kill -9 <PID>’ or ‘pkill -9 <process name>’
+    Stop Process = SIGSTOP(19) (pause signal, let’s you continue later, does not kill process)
+    End Process = SIGTERM(15) (termination signal, the right way, 
+                                the application can intercept this signal and initiate shutdown tasks such as temp file cleanup)
+    Kill Process = SIGKILL(9) (kill signal, extreme, only use if SIGTERM doesn’t work, won’t initiate shutdown tasks)
+    
+cron daemon checks the directories /var/spool/cron, /etc/cron.d and the file /etc/crontab, 
+once a minute and executes any commands specified that match the time.
+
+Two types of cron jobs
+    System cron jobs
+        run as root and rigidly scheduled
+        perform system-wide maintenance tasks (Cleaning out /tmp or rotating logs)
+        controlled by /etc/crontab
+    User cron jobs
+        Use 'crontab’ command to create user cron jobs
+        stored in /var/spool/cron/crontabs/<username>
+            stores the files of each user
+    
+‘crontab -u [user] file’ - sets users crontab file to the contents of listed file
+‘crontab -l -u [user]’ - Displays user’s crontab contents
+‘crontab -r -u [user]’ - Removes user’s crontab contents
+‘crontab -e -u [user]’ - edits user’s crontab contents
+crontab jobs run with the permissions of the owner of the crontab file
+
+
+* * * * * /directory/and/command
+| | | | |
+| | | | +---- Day of the Week   (range: 0-7, 1 = Monday)
+| | | +------ Month of the Year (range: 1-12)
+| | +-------- Day of the Month  (range: 1-31)
+| +---------- Hour              (range: 0-23)
++------------ Minute            (range: 0-59)
+
+
+    
