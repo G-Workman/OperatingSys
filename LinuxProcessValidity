@@ -1,0 +1,56 @@
+STARTUP PROCESSES (SYSV)
+    There are two primary processes after startup:
+        For kernel-space processes [kthreadd] ( PID = 2 )
+        For user-space processes /sbin/init ( PID = 1 )
+        All kernel processes are fork()ed from [kthreadd] and all user processes are fork()ed from /sbin/init or direct ancestor.
+        Kernel processes are typically used to manage hardware, are directly handled by the kernel,have their own memory space, and have a high priority.
+        They can be identified by the name enclosed in square brackets [] (using the -f option with ps). kthreadd spawned processes will have a PPID of           2.
+        The kernel starts /sbin/init which is the parent/grandparent of all user processes.
+
+KERNEL VS USER SPACE
+    The kernel processes run in its own memory space. User processes run in a separate memory space. Code running in kernel mode has unrestricted access     to the processor and main memory. This is a powerful but dangerous privilege that allows a kernel process to easily crash the entire system. The area      that only the kernel can access is called kernel space.
+
+    User mode, in comparison, restricts access to a (usually quite small) subset of memory and safe CPU operations. User space refers to the parts of         main memory that the user processes can access. If a process makes a mistake and crashes, the consequences are limited and can be cleaned up by the       kernel. This means that if your web browser crashes, it won’t take down
+
+PROCESS OWNERSHIP, EUID, RUID
+
+    !!!/etc/passwd and passwd command!!!
+
+    The effective user ID (euid), defines the access rights for a process. A second user ID, the real user ID (ruid), indicates who initiated a process.
+    The real user ID defines the user that can interact with the running process—most significantly, which user can kill and send signals to a process.
+    Users can only modify / interact with files /process that they own or have been shared with them.
+
+    A user is an entity that can run processes and own files. Users exist primarily to support permissions and boundaries. Every user-space process has a     user owner, and processes are said to run as the owner. A user may terminate or modify the behavior of its own processes (within certain limits), but     it cannot interfere with other users’ processes. In addition, users may own files and choose whether they share them with other users.
+
+SYSTEM CALLS
+    A system call is an interaction between a process and the kernel.
+    Two system calls, fork() and exec(), are important to understanding how processes startup:
+        fork() When a process calls fork(), the kernel creates a nearly identical copy of the process.  
+        exec() When a process calls exec(program), the kernel starts program, replacing the current process.
+        
+        
+ps -Nlf --ppid 2
+    Not anything that has a ppid of 2
+
+ps -Nlf --ppid 2 --forest
+    Shows entire process tree up to the originating process
+    
+ps -Nlf --ppid 2 --forest | grep -B 8 ps               #or -A to see the context "after" or --context to show both sides of the command in a ps snapshot
+    shows the 8 lines 'B'efore and including the line grepped for
+    
+top
+    shows uptime, load average, tasks running, sleeping, stopped, or zombie, and cpu usage
+    type 'f' while using top to see other flags and equip them
+    shift + v
+        hierarchical/tree view
+htop
+    generally needs to be installed by user
+    
+    
+ORPHAN AND ZOMBIE (DEFUNCT) PROCESSES
+    Orphan - Parent process exited, adopted by sbin/init with PPID of 1.
+        All daemons are orphans
+        disown -a && exit # Close a shell/terminal and force all children to be adopted
+    Zombie (defunct) - completed process, but still has an entry in the process table, waiting on parent to acknowledge or terminated
+        Zombie can’t be terminated with kill since it has already finished execution, unless the parent process that spawned it is killed.
+        Do not use resources, but do take up an entry of the process table which is a finite resource
