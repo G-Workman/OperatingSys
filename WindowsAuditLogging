@@ -27,7 +27,7 @@ RECYCLE BIN
 	!!!Location: 'C:\$Recycle.bin' !!!
 	gci 'C:\$RECYCLE.BIN' -Recurse -Verbose -Force | select *
 	gci 'C:\$RECYCLE.BIN' -Recurse -Force
-gci 'C:\$RECYCLE.BIN' -Force -Recurse | ForEach-Object { if ( ($_.extension) -like ".txt") { if ($_.Name -like "`$R*") { Write-Host $_Name -NoNewline ; Write-Host " --> " -ForegroundColor Green -NowNewline ; get-content $_.fullname } } }
+gci 'C:\$RECYCLE.BIN' -Force -Recurse | ForEach-Object { if ( ($_.extension) -like ".txt") { if ($_.Name -like "`$R*") { Write-Host $_.Name -NoNewline ; Write-Host " --> " -ForegroundColor Green -NoNewline ; get-content $_.fullname } } }
 
 *PREFETCH*
 	Prefetch files are created by the windows operating system when an application is run from a specific location for the first time.
