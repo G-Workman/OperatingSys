@@ -70,3 +70,6 @@ WINDOWS EVENT LOG
 	CustomLog - Contains events logged by applications that create a custom log.
 	Using a custom log enables an application to control the size of the log or attach ACLs for security purposes without affecting other applications.
 	View in the GUI Event Viewer
+	Get-Eventlog -LogName *
+	Get-Eventlog -LogName Security -Message "*remote*" | ft -wrap
+	get-WinEvent -FilterHashtable @{logname="security";id="4624"} | select -first 5 | ft -wrap
