@@ -58,3 +58,15 @@ History will record the access to the file on the website that was accessed via 
 Find FQDNs in Sqlite Text Files
 	$History = (Get-Content 'C:\users\<username>\AppData\Local\Google\Chrome\User Data\Default\History') -replace "[^a-zA-Z0-9\.\:\/]",""
 	$History| Select-String -Pattern "(https|http):\/\/[a-zA-Z_0-9]+\.\w+[\.]?\w+" -AllMatches|foreach {$_.Matches.Groups[0].Value}| ft
+
+AUDITING
+	auditpol /get /category:*
+		returns all system audit policies
+		
+WINDOWS EVENT LOG
+	Application - Contains events logged by applications.
+	Security - Contains events such as valid/ invalid logon attempts and other events related to resource use like creating, opening, or deleting files.
+	System - Contains events logged by system components, such as driver failures other system component to load during startup.
+	CustomLog - Contains events logged by applications that create a custom log.
+	Using a custom log enables an application to control the size of the log or attach ACLs for security purposes without affecting other applications.
+	View in the GUI Event Viewer
