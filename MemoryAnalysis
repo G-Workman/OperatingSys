@@ -52,10 +52,27 @@ VOLATILITY
 	explorer shouldn't be opening reader_sl.exe
 	
 	
-	.\volatility_2.6_win64_standalone.exe -f ".\cridex.vmem" --profile=WinXPSP2x86 pstree
+	mem.\volatility_2.6_win64_standalone.exe -f ".\cridex.vmem" --profile=WinXPSP2x86 pstree
+										      									   psscan
+										      									   pslist
 	
 	.\volatility_2.6_win64_standalone.exe -f ".\cridex.vmem" --profile=WinXPSP2x86 procdump -p 1640 -D .
 	
 	.\volatility_2.6_win64_standalone.exe -f ".\cridex.vmem" --profile=WinXPSP2x86 memdump -p 1640 -D .
+										       									   dlldump
+																				   dlllist
+																				   hivedump
+																				   hivelist
+																				   dumpregistry
 	
 	net use * \\live.sysinternals.com\tools
+	
+	z:\strings.exe -accepteula "1640.dmp" > 1640.txt
+	
+	.\volatility_2.6_win64_standalone.exe -f ".\cridex.vmem" --profile=WinXPSP2x86 connections
+	
+	.\volatility_2.6_win64_standalone.exe -f ".\cridex.vmem" --profile=WinXPSP2x86 connscan
+	
+	iplocation.net
+	
+	use findstr /i ""
