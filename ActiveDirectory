@@ -1,0 +1,49 @@
+What security flaw does group nesting create?
+	AD nested group enumeration demo
+	1. Get Name Property from the Active Directory Group named "Domain Admins"
+		(Get-AdGroupMember -Identity 'domain admins').Name
+	2. Get Active Directory Group 'System' Admin Names 'LvL 1'
+		(Get-AdGroupMember -Identity "System Admins LV1").Name
+	3. Get Active Directory Group 'System Admin' Names
+		(Get-AdGroupMember -Identity "System Admins").Name
+	4. Get Active Directory Group 'System' Admin Names 'LVL 2'
+		(Get-AdGroupMember -Identity "System Admins LV2").Name
+
+Never login as administrator
+RUNAS
+Default local administrator disabled
+
+GROUP POLICY OBJECT QUERIES
+	gpresult
+	Get-GPResultantSetOfPolicy
+	Demo
+
+SUSPICIOUS ACTIVITY
+	Unknown admin accounts
+	Active outside normal work hours
+	Nested groups
+	Service accounts logging into hosts
+	User accounts logging into critical infrastructure (i.e. Domain Controller)
+	
+DSTOOLS
+	DSADD
+	DSGET
+	DSMOD
+	DSMOVE
+	DSQUERY
+	
+POWERSHELL AD COMMANDS
+	(VERB)-AD(NOUN)
+		Examples
+			Get-ADUser
+			New-ADUser -Name "Bad Guy" -PasswordNotRequired 1 -Path "OU=3RD LPT,OU=CCO,OU=3RDBN,OU=WARRIORS,DC=ARMY,DC=WARRIORS"
+			
+gwmi win32_service | where { $_.name -like "adws" -or $_.name -like "kdc" -or $_.name -like "netlogon" -or $_.name -like "dns" } |
+ select name,state,status  
+
+Get-ADUser -filter * -property * | where {$_.<property> -like "*<pattern>*" } | select name, <whatever property>
+Get-ADUser -Filter * -properties * | select -First 1
+Search-ADAccount -AccountExpired | select Name
+Search-ADAccount -AccountDisabled | select Name
+Get-ADUser -filter * -property * | where {$_.PasswordNotRequired -eq $true } | select name
+Get-ADUser -filter * -property * | where {$_.AllowReversiblePasswordEncryption -eq $true } | select name
