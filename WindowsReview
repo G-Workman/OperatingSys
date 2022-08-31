@@ -1,0 +1,20 @@
+Powershell and sysinternals
+Maybe CMD for sc query
+
+net use * \\live.sysinternals.com\tools
+net use
+get-PSDrive
+
+netstat -anob
+get-nettcpconnections
+
+get-process svchost | select name, id, path
+.\auto runs
+task manager
+.\tcpview
+
+Recycle bin
+B.A.M.
+UserAssist
+Prefetch
+Jump list
