@@ -88,3 +88,20 @@ AUDITING
 	auditpol /get /category:*
 		returns all system audit policies
     
+		
+		
+AutoRuns
+
+Task Scheduler
+	No farther than Microsoft
+
+Profiles
+	All Users, All Hosts					$PsHome\Profile.ps1
+	All Users, Current Host				$PsHome\Microsoft.PowerShell_profile.ps1
+	Current User, All Hosts				$Home\[My]Documents\Profile.ps1
+	Current User, Current Host		$Home\[My]Documents\WindowsPowerShell\Profile.ps1
+	
+	test-path <path>
+	
+mechanism = what caused that thing to happen?
+No searching the context of drivers, dlls, handles, binaries
