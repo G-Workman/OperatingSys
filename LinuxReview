@@ -10,3 +10,22 @@ Linux Validity
 	
 netstat or sudo ss -ntlp
 htop or top or ps -elf				#not recommended to use lsof
+
+look at /etc/ or /lib/systemd/system for services if PPID is 1
+htop's tree or htop --forest
+
+lines around --context
+line before -B
+line after -A
+
+"CRON" means there is a cronjob
+view 
+	sudo crontab -l -u <user>
+ran by the user who owns it
+
+sudo -l to see what you can run with sudo
+
+/var/spool/cron/crontab
+	/etc/crontab
+	/etc/crontab.d
+	
