@@ -28,4 +28,12 @@ sudo -l to see what you can run with sudo
 /var/spool/cron/crontab
 	/etc/crontab
 	/etc/crontab.d
-	
+	/etc/bash/.bashrc
+		interactive non-login shells
+	/etc/profile											LOGIN PERSISTENCE BY HIDING IN PLAIN SIGHT
+		interactvie login shells
+		execute the shell scripts in /etc/profile.d
+		
+		
+!!!Should I Raise My Hand?!!!
+!!!YES!!!
