@@ -1,0 +1,12 @@
+Linux Validity
+	Where am I?
+	Who am I?
+	What am I allowed to do?
+	What's going on?
+	What's that?
+	Why's that happening?
+	How's that happening?
+	What's in there?
+	
+netstat or sudo ss -ntlp
+htop or top or ps -elf				#not recommended to use lsof
